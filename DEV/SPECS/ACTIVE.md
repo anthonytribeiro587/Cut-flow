@@ -1,40 +1,32 @@
-# Contrato ativo — Fundação genérica Supabase para CutFlow
+# Contrato ativo — Fundação de domínio CutFlow
 
 ## Objetivo
 
-Preparar clientes genéricos Supabase para Next.js App Router, reutilizando o projeto já configurado no repositório.
+Auditar em modo somente leitura o projeto Supabase existente e preparar a fundação multi-tenant do CutFlow, incluindo migration, RLS, seed separado, repositories, cálculos e planejamento de capacidade.
 
-## Identidade
+## Escopo e restrições
 
-- Nome: CutFlow
-- Descrição: Orçamentos e produção industrial
-- Descrição técnica: SaaS de orçamento, planejamento de capacidade e gestão da produção industrial.
+- Reutilizar o projeto já configurado no `.env.local`; não criar outro projeto.
+- Preservar `.env.local`, Auth, Storage, configurações Supabase e schemas gerenciados.
+- Preparar migration versionada somente em `public`; não aplicar remotamente enquanto o inventário remoto estiver inacessível ou incerto.
+- Remover na migration somente objetos legados com evidência inequívoca, sem `CASCADE`.
+- Criar seed demo separado, com parâmetros industriais explicitamente demonstrativos.
+- Criar services por domínio e módulos puros de cálculo/scheduling com testes unitários.
+- Executar lint, typecheck, testes e build; criar o commit local solicitado, sem push.
+- Registrar em DEV decisões sobre dependências, escopo e limitações.
 
-## Escopo desta etapa
+## Fora de escopo
 
-- Instalar `@supabase/supabase-js` e `@supabase/ssr`.
-- Criar cliente browser, cliente server e atualização de sessão/cookies para o App Router.
-- Reutilizar as variáveis existentes do `.env.local` sem ler ou alterar esse arquivo.
-- Preservar toda a infraestrutura saudável já existente.
-
-## Restrições
-
-- Não apagar histórico ou recriar o repositório; não executar `git init`.
-- Não remover ou editar secrets e variáveis locais; preservar `.env.local`.
-- Não criar outro projeto Supabase, nem executar migrations ou criar tabelas.
-- Não restaurar regras de negócio, APIs, tipos ou services antigos.
-- Não apagar dados/tabelas existentes, nem acessar ou alterar configuração externa da Vercel.
-- Não implementar funcionalidades do produto nesta etapa.
-- Não fazer push. O pedido original permite commit local se tudo estiver correto.
+DXF/DWG, nesting, IA, NFe, financeiro, ERP, estoque, otimização avançada, agenda drag-and-drop e pagamentos.
 
 ## Aceite
 
-- Pacotes e clientes Supabase SSR genéricos disponíveis para browser e server.
-- `.env.local` intacto; sem projeto remoto novo, migrations ou tabelas.
-- `npm run lint`, `npm run typecheck` e `npm run build` passam.
-- Commit local `chore: prepare Supabase foundation for CutFlow`; sem push.
+- Relatório de auditoria identifica evidências locais e limitações do acesso remoto.
+- Schema, constraints, índices, RLS e triggers prontos em migration.
+- Seed, camada de dados, cálculos e agenda preparados.
+- Verificações locais aprovadas e commit `feat: establish CutFlow domain and database foundation` criado sem push.
+- Qualquer migration destrutiva remota não aplicada fica claramente registrada.
 
 ## Estado
 
-- Em execução.
-- Atualizado: 2026-09-30.
+- Concluído localmente em 2026-09-30; migration remota não aplicada deliberadamente. Inventário remoto e motivos em DEV/SUPABASE_AUDIT.md.

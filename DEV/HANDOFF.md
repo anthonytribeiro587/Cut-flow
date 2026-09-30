@@ -4,14 +4,19 @@ Atualizado: 2026-09-30 · Contrato ativo: `SPECS/ACTIVE.md`
 
 ## Estado
 
-- O produto anterior foi removido da aplicação.
-- A fundação CutFlow contém shell responsivo, navegação para os módulos previstos e uma home inicial sem dados simulados.
-- Stack preservada: Next.js 15, React 19, TypeScript, Tailwind CSS 3 e ESLint 9.
-- A fundação genérica Supabase foi preparada com clientes browser/server e middleware SSR/cookies; reutiliza o projeto já configurado nas variáveis existentes.
-- Nenhuma regra de negócio, API, tipo ou service legado foi restaurado. Nenhuma migration/tabela foi criada ou executada e nenhum projeto Supabase novo foi criado.
-- `.env.local` foi preservado sem alteração. Não houve acesso ao banco nem alteração em configuração externa da Vercel.
-- Lint, typecheck e build passaram. Nenhuma operação remota foi executada.
+- Aplicação ainda usa shell e páginas de módulo provisórias.
+- A infraestrutura SSR genérica Supabase continua apontando para o projeto existente `projectmanager`.
+- Auditoria remota somente leitura completada; ver `DEV/SUPABASE_AUDIT.md`.
+- Migration multi-tenant CutFlow, seed demo separado, repositories por domínio, cálculos puros e planejador de capacidade preparados localmente.
+- Migration destrutiva **não aplicada** e seed não executado.
+- `set_updated_at()`, `rls_auto_enable()`, `ensure_rls`, Auth, Storage, extensões e demais schemas preservados.
+- Vitest adicionado como dependência exata de desenvolvimento para testes pedidos.
 
-## Próximo passo
+## Antes de aplicar migration
 
-Definir a modelagem do banco CutFlow usando o projeto Supabase existente antes de implementar regras de orçamento, capacidade, pedidos ou produção. Ver resultados das verificações em `VERIFY.md`.
+- Revisar a perda dos dados antigos: tabelas legadas contêm 5 projetos, 5 fornecedores, 15 relações, 50 etapas, 8 issues, 6 updates e 5 documentos.
+- Confirmar snapshot/backup adequado fora desta mudança local.
+- Migration só remove a view `project_overview` e as oito tabelas antigas confirmadas; não usa `CASCADE` nem remove funções genéricas.
+- Seed seleciona o primeiro usuário Supabase como owner demo; revise esse alvo antes de executá-lo num ambiente compartilhado.
+
+Ver evidências em `DEV/VERIFY.md`.

@@ -20,6 +20,6 @@ npm install
 npm run dev
 ```
 
-Verificações disponíveis: `npm run lint`, `npm run typecheck` e `npm run build`.
+Verificações disponíveis: `npm run lint`, `npm run typecheck`, `npm test` e `npm run build`.
 
-A conexão usa `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY`, já configuradas localmente. A fundação não cria tabelas nem executa migrations.
+A aplicação reutiliza `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY`. A modelagem está em `supabase/migrations` e o seed demonstrativo separado em `supabase/seed/demo.sql`. Consulte `DEV/SUPABASE_AUDIT.md` antes de aplicar a migration: ela remove somente o domínio Obra.flux identificado no projeto atual. A migration não foi aplicada remotamente.

@@ -1,25 +1,28 @@
-# Verificação
+# Verificação CutFlow
 
-## Fundação genérica Supabase — 2026-09-30
+Atualizado em 2026-09-30.
 
-- Instalados `@supabase/supabase-js` (`^2.117.2`) e `@supabase/ssr` (`^0.12.7`).
-- `src/lib/supabase/client.ts` — cliente browser; `server.ts` — cliente server com cookies async do Next.js 15; `middleware.ts` e `src/middleware.ts` — renovação de sessão e propagação de cookies.
-- Configuração lida pelas factories via `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY`; `.env.local` não foi editado.
-- `npm run lint` — passou.
-- `npm run typecheck` — passou.
-- `npm run build` — passou; middleware incluído no build.
-- Nenhum projeto Supabase criado, nenhuma consulta/remota executada, migration ou tabela criada, dado existente removido ou regra/API/tipo/service antigo restaurado.
-- Commit local criado; sem push.
+## Banco remoto (somente leitura)
 
-## Reset CutFlow — 2026-09-30
+- Conector confirmou o projeto existente projectmanager em sa-east-1, PostgreSQL 17.6 e estado saudável.
+- Foram listadas 3 migrations remotas e as 8 tabelas legadas em public; todas com RLS habilitado. Consulte SUPABASE_AUDIT.md para contagens, policies, triggers, funções, view, extensões e Storage.
+- Inspeção somente leitura confirmou que a view project_overview depende das tabelas antigas; a migration a remove explicitamente antes delas.
+- Nenhuma escrita remota ocorreu. Migration estrutural **não aplicada**; seed não executado.
 
-- `npm uninstall @supabase/ssr @supabase/supabase-js` — concluído; 0 vulnerabilidades reportadas.
-- `npm run lint` — passou.
-- `npm run typecheck` — passou após o build atualizar os tipos gerados obsoletos em `.next`.
-- `npm run build` — passou; home estática e módulos provisórios pré-renderizados.
-- Busca global por nomes, termos e domínio visual do produto anterior — nenhum resultado em código ou documentação ativa.
-- Checagem HTTP local — `/` respondeu 200 com título e descrição CutFlow.
-- Checagem visual com navegador — não executada: `agent-browser` e Chromium não estão disponíveis no ambiente.
-- `git status --short` — listado no resumo da execução.
+## Código local
 
-`.env.local` foi preservado sem leitura ou alteração. Não houve acesso ao Supabase, execução de migrations, alteração de configuração externa da Vercel, deploy ou push.
+- npm run lint — passou.
+- npm run typecheck — passou.
+- npm test — passou: 2 arquivos, 5 testes.
+- npm run build — passou com Next.js 15.5.26.
+- Checagem estrutural SQL — 21 tabelas criadas e todas as 21 têm RLS explicitamente habilitado; objetos de remoção limitados a project_overview e às 8 tabelas antigas. O SQL não foi executado em banco local/remoto.
+- Não há psql nem Docker neste ambiente; não foi possível executar lint PostgreSQL local. Migration permanece sujeita a revisão SQL adicional antes de aplicar.
+- git status --short e commit local solicitados registrados ao final da execução.
+
+## Alterações
+
+- Migration versionada 20260930201909_cutflow_domain_foundation.sql; seed separado supabase/seed/demo.sql.
+- Repositories para organizações/membros, perfis, settings, clientes, materiais/processos, máquinas/parâmetros, orçamentos, pedidos, produção e agenda.
+- Cálculo industrial puro de peso líquido (com furos), corte, piercings, tempo, custo e preço com markup.
+- Planejador puro de capacidade em dias úteis, turnos, reservas e buffer comercial.
+- Vitest exato 5.0.3 adicionado como dependência de desenvolvimento para os testes pedidos.
