@@ -3,38 +3,31 @@
 ## Latest Run
 
 - Date: 2026-09-30
-- Scope: acceptance gate for login, authenticated operational writes, visitor blocking, mobile layout, and security.
+- Scope: private route access, cache behavior, login shell, and required build gates.
 - Runtime: optimized production build served locally using ignored `.env.local`; no deployment.
 
 ## Automated Checks
 
 - `npm run lint` — passed.
 - `npm run typecheck` — passed.
-- `npm run build` — passed; all application and API routes compiled.
-- `npm audit --audit-level=low` — passed; 0 vulnerabilities.
+- `npm run build` — passed; output includes the compiled Next middleware.
+- `npm audit` was not rerun in this task; the previous 2026-09-30 acceptance pass reported 0 vulnerabilities.
 
-## Authentication And Browser
+## HTTP Route Protection
 
-- Valid email/password login succeeded using the test identity provisioned manually by the maestro. Return from `/login?next=/issues` went to `/issues`.
-- Invalid password showed “E-mail ou senha inválidos. Confira os dados e tente novamente.” and retained the `/issues` return context.
-- Reload retained the authenticated state (`Sair` remained visible); logout returned to the dashboard, and another reload showed the visitor state.
-- At 390×844, `/login`, dashboard, `/projects/[id]`, stage edit dialog, issue create/edit dialog, and update entry were inspected. Document width stayed at 390 px; both dialogs fit the viewport and scroll internally as needed.
-- Browser error output was empty after the authenticated and invalid-login flows. No React runtime, hydration, or Next error was observed. Network showed the expected local API writes: issue POST 201, issue PATCH 200 for edit and resolve, update POST 201, stage PATCH 200 (plus one PATCH 200 to restore the original stage).
+- Without a session, GET `/`, `/projects`, `/projects/00000000-0000-0000-0000-000000000000`, `/issues`, `/contractors`, `/updates`, and `/documents` each returned 307 to `/login?next=<original path>`.
+- `/projects?tab=active` preserved its query in `next`; a direct requested project path was preserved.
+- Protected redirect responses included `Cache-Control: no-store, no-cache, must-revalidate, private`.
+- POST `/api/updates` without a session returned 401 with friendly application text. API handlers still perform explicit Supabase user checks; middleware does not replace write authorization.
+- `/login` returned 200 with the existing form and no operational sidebar/menu or “Visitante” label in its HTML. Its response was also no-store.
+- The first production run exposed that root `middleware.ts` was ignored while the App Router lives in `src/app`; moving it to `src/middleware.ts` fixed this. The final build lists `ƒ Middleware`.
 
-## Persistence And Cleanup
+## Pending Browser Acceptance
 
-- `project_updates`: created a clearly marked fictional update linked to the Canoas project and Civil stage. API returned 201; direct SQL confirmed `project_id`, `stage_id`, body, progress 72, author and timestamp. The update appeared immediately and after refresh. The exact test row was then removed by ID and matching body; final query confirmed zero rows.
-- `project_stages`: changed Civil from Em andamento/85%/no note to Aguardando terceiro/86%/a fictional observation. API returned 200; direct SQL confirmed the UPDATE, UI reflected it, and refresh retained it. Restored via the application to Em andamento/85%/no note with its original owner and planned dates. Final query confirmed those values.
-- `issues`: created a clearly marked fictional issue (201), edited its description/status (PATCH 200), marked it resolved (PATCH 200), and confirmed the resolved row and timestamp via SQL after refresh. Removed only that exact test ID with matching title and edited description; final query confirmed zero rows.
+- Not exercised in this environment: valid login, login return navigation, refresh session persistence, logout click, browser Back/BFCache, expiry during use, and visual checks at 390 px and desktop.
+- `agent-browser` and Chromium are not installed, and no authenticated browser session for the manually provisioned test identity was available. Do not mark these as passed. Existing prior-run login/write/mobile results predate the new private-access behavior and do not cover these checks.
 
-## Visitor, RLS And Security
+## Security And Scope
 
-- Public `GET /` and `GET /projects` returned 200 before/after login. After logout, POST `/api/updates`, POST `/api/issues`, and PATCH `/api/stages/[id]` each returned 401 with friendly messages; no anonymous write occurred.
-- Queried `pg_class.relrowsecurity`: RLS is enabled on `documents`, `issues`, `project_stages`, `project_updates`, `project_vendors`, `projects`, `update_attachments`, and `vendors`.
-- Re-read `pg_policies`: `anon` retains SELECT only. Authenticated permissions remain SELECT generally, plus UPDATE on `project_stages`, INSERT/UPDATE on `issues`, and INSERT on `project_updates`; no DELETE policy. No schema or RLS change was made in this pass.
-- `.env.local` remains Git-ignored. Source/config scan found no test email/password, `SUPABASE_SERVICE_ROLE_KEY`, or `service_role` reference. Supabase app code references only `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`. No credential was added to project files, app logs, or `DEV/`.
-- No deployment and no commit.
-
-## Remaining Acceptance Gate
-
-- None. The authenticated and visitor acceptance items passed. No E2E test suite or axe run is configured for this repository.
+- No Supabase RLS changes or database writes were made. RLS remains enabled and no `service_role` key was introduced.
+- No credentials, dependencies, deployment, commit, or approved product functionality were changed.

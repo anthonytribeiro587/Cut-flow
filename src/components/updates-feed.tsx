@@ -16,7 +16,7 @@ export function UpdatesFeed({ projects, updates: initialUpdates, issues }: { pro
     try {
       const response = await fetch("/api/updates", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ projectId, stageId: stageId || null, issueId: issueId || null, progress: Number(progress), text: text.trim() }) });
       const result: { update?: { id: string; project_id: string; stage_id: string | null; author_name: string; body: string; progress: number | null; occurred_at: string }; error?: string } = await response.json();
-      if (response.status === 401) { router.push(`/login?next=${encodeURIComponent(window.location.pathname + window.location.hash)}`); return; }
+      if (response.status === 401) { window.location.replace(`/login?next=${encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)}`); return; }
       if (!response.ok || !result.update) throw new Error(result.error ?? "Não foi possível registrar a atualização.");
       const row = result.update; const stage = project?.stages.find((entry) => entry.id === row.stage_id);
       setItems((previous) => [{ id: row.id, projectId: row.project_id, projectName: project?.name, author: row.author_name, date: row.occurred_at, text: row.body, progress: row.progress ?? undefined, stage: stage?.name ?? "Acompanhamento geral", stageId: row.stage_id ?? undefined, photos: 0 }, ...previous]);

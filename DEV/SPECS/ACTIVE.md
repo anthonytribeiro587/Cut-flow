@@ -1,14 +1,14 @@
-# Active Spec — MVP operacional com Auth e escrita segura
+# Active Spec — Obra.flux privado com Auth e escrita segura
 
 ## Objetivo
 
-Continuar o MVP existente de gestão e acompanhamento físico de obras, preservando a interface, leituras reais do Supabase e responsividade já validadas. Priorizar autenticação simples, escrita autenticada e fluxos operacionais de etapas e pendências. Não fazer deploy.
+Continuar o MVP existente de gestão e acompanhamento físico de obras, preservando o layout aprovado, leituras reais do Supabase e responsividade. O sistema é privado: todas as rotas operacionais exigem sessão. Preservar autenticação Supabase, escrita autenticada e fluxos operacionais de etapas e pendências. Não fazer deploy.
 
 ## Ordem de trabalho
 
-1. Implementar login/logout Supabase Auth com email e senha, sem signup público, persistência/restauração de sessão e retorno ao contexto anterior.
+1. Proteger centralmente todas as rotas operacionais via middleware; manter `/login` como única tela acessível sem sessão. Implementar login/logout Supabase Auth com email e senha, sem signup público, persistência/restauração de sessão e retorno seguro ao contexto anterior.
 2. Registrar atualização real em `project_updates`, com etapa/progresso/pendência opcional, feedback, tratamento de rede/RLS/expiração e atualização imediata da interface.
-3. Auditar RLS. Visitante mantém leitura pública; escrita requer usuário autenticado. Restringir políticas somente se necessário e de forma mais estrita, sem enfraquecer RLS, criar usuários ou fazer alteração destrutiva.
+3. Preservar RLS habilitada e os limites atuais de escrita; o middleware privado bloqueia leituras operacionais no app sem sessão. Não criar usuários nem fazer alteração destrutiva.
 4. Edição operacional de etapas: status, progresso, responsável, datas previstas, observação e conclusão real.
 5. Criar, editar e resolver pendências sem exclusão destrutiva; combinar filtros operacionais por estado, data, prioridade, projeto e terceirizado.
 6. Refinar dashboard, próximos marcos, cronograma, terceiros, histórico e metadados de documentos; preservar layout e priorizar mobile a 390 px.
@@ -23,7 +23,10 @@ Continuar o MVP existente de gestão e acompanhamento físico de obras, preserva
 
 - Login somente por email/senha em `/login`; usuários serão provisionados manualmente no Supabase.
 - Sem cadastro público, login social, MFA ou recuperação de senha.
-- Visitantes mantêm leitura do MVP; somente autenticados podem executar as escritas operacionais previstas.
+- Toda rota operacional (incluindo `/`, projetos, pendências, terceirizados, atualizações, documentos e futuras rotas) exige sessão autenticada. Redirecionar para `/login` preservando pathname e query; APIs mantêm respostas 401 sem sessão.
+- `/login` não renderiza shell, navegação ou dados operacionais. Usuários autenticados veem o shell aprovado, identidade da conta e ação de logout.
+- Logout encerra a sessão local Supabase, limpa a interface protegida, usa navegação substitutiva para `/login` e rotas privadas enviam `Cache-Control: no-store`.
+- Expiração redireciona ao login preservando o contexto atual quando possível; após novo login, retorna ao caminho pretendido.
 - Nunca usar chave `service_role`; usar apenas `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 - Não permitir escrita anônima nem simular sucesso. RLS continua habilitada e deve limitar operações às necessárias.
 
@@ -40,7 +43,7 @@ Continuar o MVP existente de gestão e acompanhamento físico de obras, preserva
 - Manter chamadas de banco em serviços/repos, com colunas explícitas e tipos estritos.
 - Usar modal/drawer compacto para editar etapa e pendência, mantendo desktop e mobile.
 - Ações esperadas: inserir atualização; atualizar etapa; inserir/atualizar pendência e marcar como resolvida. Sem exclusão operacional.
-- Ajustar RLS apenas para que visitantes leiam e autenticados executem somente os fluxos aceitos pela aplicação; não criar política anônima de escrita.
+- Não alterar RLS neste fluxo privado; manter as políticas já aplicadas, RLS habilitada e nenhuma política anônima de escrita.
 - Auditoria de 2026-09-30 encontrou políticas `authenticated manage ...` com `ALL USING (true) WITH CHECK (true)` nas oito tabelas. Isso permite mutações além do escopo, inclusive exclusões. Decisão: substituir por leitura para authenticated nas tabelas sem escrita operacional; `project_stages` recebe somente SELECT/UPDATE; `issues`, SELECT/INSERT/UPDATE; `project_updates`, SELECT/INSERT. Manter políticas anon SELECT existentes e RLS habilitada. Registrar como migration SQL sem tocar em dados/tabelas/colunas.
 - Migration `scope_authenticated_operational_writes` foi aplicada e conferida em `pg_policies`; a migration alterou somente policies, sem alteração de tabelas/colunas. No acceptance gate, os registros de teste foram inseridos pelas telas e removidos somente pelos IDs/sentinelas exatos; a etapa usada foi restaurada pela aplicação.
 - O maestro provisionou manualmente uma conta fictícia de teste. Login, restauração de sessão, logout e gravações autenticadas foram validados localmente; nenhuma conta foi criada automaticamente.
@@ -49,7 +52,7 @@ Continuar o MVP existente de gestão e acompanhamento físico de obras, preserva
 
 ## Critérios de aceite
 
-- Visitante navega por todas as áreas, não consegue inserir/atualizar e é levado ao login preservando destino ao tentar escrever.
+- Sem sessão, acesso direto e refresh em qualquer rota operacional redirecionam para `/login`, sem renderizar dados; APIs de escrita seguem exigindo sessão e respondem 401.
 - Usuário Supabase previamente provisionado entra, mantém sessão após refresh, registra atualização, atualiza etapa, cria/edita/resolva pendência; operações persistem e refletem sem refresh manual.
 - Erros de credencial, rede, token expirado e RLS são apresentados sem mensagens técnicas brutas.
 - Indicadores do dashboard e marcos são derivados de dados operacionais reais.
@@ -65,6 +68,6 @@ Continuar o MVP existente de gestão e acompanhamento físico de obras, preserva
 
 ## Status
 
-- State: complete
+- State: implementation complete; browser acceptance pending in an environment with browser automation and the provisioned test session.
 - Owner: Codex + maestro
 - Updated: 2026-09-30

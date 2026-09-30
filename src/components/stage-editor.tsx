@@ -18,7 +18,7 @@ export function StageEditor({ stage }: { stage: Stage }) {
     try {
       const response = await fetch(`/api/stages/${stage.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status, progress: Number(progress), owner, start: start || null, end: end || null, note, actualEnd: status === "Concluído" ? actualEnd : null }) });
       const result = await response.json();
-      if (response.status === 401) { router.push(`/login?next=${encodeURIComponent(window.location.pathname + window.location.hash)}`); return; }
+      if (response.status === 401) { window.location.replace(`/login?next=${encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)}`); return; }
       if (!response.ok) throw new Error(result.error ?? "Não foi possível atualizar a etapa.");
       setOpen(false); router.refresh();
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Verifique a conexão e tente novamente."); }

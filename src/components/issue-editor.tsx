@@ -26,7 +26,7 @@ export function IssueEditor({ projects, vendors, vendorIdsByProject, issue, defa
     try {
       const response = await fetch(issue ? `/api/issues/${issue.id}` : "/api/issues", { method: issue ? "PATCH" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(issue ? { description: payload.description, stageId: payload.stageId, owner, vendorId: payload.vendorId, priority, status, due: payload.due } : payload) });
       const result = await response.json();
-      if (response.status === 401) { router.push(`/login?next=${encodeURIComponent(window.location.pathname + window.location.hash)}`); return; }
+      if (response.status === 401) { window.location.replace(`/login?next=${encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)}`); return; }
       if (!response.ok) throw new Error(result.error ?? "Não foi possível salvar a pendência.");
       close(); router.refresh();
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Verifique a conexão e tente novamente."); }
@@ -40,7 +40,7 @@ export function ResolveIssueButton({ issue }: { issue: Issue }) {
   const router = useRouter(); const [busy, setBusy] = useState(false); const [error, setError] = useState("");
   async function resolve() {
     setBusy(true); setError("");
-    try { const response = await fetch(`/api/issues/${issue.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: "Resolvida" }) }); const result = await response.json(); if (response.status === 401) { router.push(`/login?next=${encodeURIComponent(window.location.pathname + window.location.hash)}`); return; } if (!response.ok) throw new Error(result.error ?? "Não foi possível resolver a pendência."); router.refresh(); }
+    try { const response = await fetch(`/api/issues/${issue.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: "Resolvida" }) }); const result = await response.json(); if (response.status === 401) { window.location.replace(`/login?next=${encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)}`); return; } if (!response.ok) throw new Error(result.error ?? "Não foi possível resolver a pendência."); router.refresh(); }
     catch (cause) { setError(cause instanceof Error ? cause.message : "Tente novamente."); }
     finally { setBusy(false); }
   }
