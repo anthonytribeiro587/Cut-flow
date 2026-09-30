@@ -1,6 +1,6 @@
-# DEV - projectmanager
+# DEV - CutFlow
 
-Compact operational documentation and project memory.
+Contexto operacional compacto do CutFlow.
 
 Recommended read order:
 

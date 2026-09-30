@@ -1,15 +1,16 @@
-# Active Handoff
+# Handoff CutFlow
 
-Updated: 2026-09-30 · Active spec: `SPECS/ACTIVE.md` · Verification: `VERIFY.md`
+Atualizado: 2026-09-30 · Contrato ativo: `SPECS/ACTIVE.md`
 
-## Snapshot
+## Estado
 
-- Obra.flux is now private at the application layer. `src/middleware.ts` validates the Supabase user and redirects every non-API route (except `/login`) to `/login?next=...`; the active spec records the change from the former public-read visitor model.
-- `/login` renders only the existing login form in a clean authentication frame. Authenticated shell identity, local logout, token-expiry navigation, `no-store` headers and BFCache return handling are implemented. Existing API write handlers retain explicit Supabase user checks and anonymous writes return 401.
-- Production HTTP verification confirmed 307 redirects with preserved destination for `/`, `/projects`, `/projects/[id]`, `/issues`, `/contractors`, `/updates`, and `/documents`; private redirect responses carry `Cache-Control: no-store, no-cache, must-revalidate, private`. POST `/api/updates` without a session returned 401.
-- `npm run lint`, `npm run typecheck`, and `npm run build` passed. No database/RLS change, dependency change, credential change, commit or deployment was made.
-- Visual mobile/desktop, browser back/BFCache, valid login, refresh persistence and logout browser flows remain to be exercised: `agent-browser` and Chromium are unavailable in this environment, and no test session is present in the browser.
+- O produto anterior foi removido da aplicação.
+- A fundação CutFlow contém shell responsivo, navegação para os módulos previstos e uma home inicial sem dados simulados.
+- Stack preservada: Next.js 15, React 19, TypeScript, Tailwind CSS 3 e ESLint 9.
+- A integração de domínio Supabase e sua migration antiga foram removidas do repositório. Nenhuma migration foi executada e nenhum banco foi acessado.
+- `.env.local` foi preservado sem leitura ou alteração. Não houve alteração em configuração externa da Vercel.
+- Lint, typecheck e build passaram. A página inicial respondeu HTTP 200; verificação visual por navegador ficou indisponível neste ambiente.
 
-## Next Step
+## Próximo passo
 
-Middleware and server-side route protection are verified. Resume the pending browser acceptance items in `VERIFY.md` when browser automation and the maestro-provisioned test session are available. Do not commit or deploy until separately requested.
+Definir modelagem e fluxos do produto antes de implementar regras de orçamento, capacidade, pedidos ou produção. Ver resultados das verificações em `VERIFY.md`.

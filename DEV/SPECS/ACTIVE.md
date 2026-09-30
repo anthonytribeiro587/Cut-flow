@@ -1,73 +1,39 @@
-# Active Spec — Obra.flux privado com Auth e escrita segura
+# Contrato ativo — Reset e fundação CutFlow
 
 ## Objetivo
 
-Continuar o MVP existente de gestão e acompanhamento físico de obras, preservando o layout aprovado, leituras reais do Supabase e responsividade. O sistema é privado: todas as rotas operacionais exigem sessão. Preservar autenticação Supabase, escrita autenticada e fluxos operacionais de etapas e pendências. Não fazer deploy.
+Remover o produto anterior e preparar a base profissional do CutFlow, sem implementar o SaaS completo.
 
-## Ordem de trabalho
+## Identidade
 
-1. Proteger centralmente todas as rotas operacionais via middleware; manter `/login` como única tela acessível sem sessão. Implementar login/logout Supabase Auth com email e senha, sem signup público, persistência/restauração de sessão e retorno seguro ao contexto anterior.
-2. Registrar atualização real em `project_updates`, com etapa/progresso/pendência opcional, feedback, tratamento de rede/RLS/expiração e atualização imediata da interface.
-3. Preservar RLS habilitada e os limites atuais de escrita; o middleware privado bloqueia leituras operacionais no app sem sessão. Não criar usuários nem fazer alteração destrutiva.
-4. Edição operacional de etapas: status, progresso, responsável, datas previstas, observação e conclusão real.
-5. Criar, editar e resolver pendências sem exclusão destrutiva; combinar filtros operacionais por estado, data, prioridade, projeto e terceirizado.
-6. Refinar dashboard, próximos marcos, cronograma, terceiros, histórico e metadados de documentos; preservar layout e priorizar mobile a 390 px.
-7. Revisar loading/empty/error, acessibilidade, consistência visual, performance, README e prontidão para Vercel.
-8. Validar fluxo visitante e autenticado, lint, typecheck, build, audit, console, network, responsividade e segurança.
+- Nome: CutFlow
+- Descrição: Orçamentos e produção industrial
+- Descrição técnica: SaaS de orçamento, planejamento de capacidade e gestão da produção industrial.
 
-## Escopo definitivo do produto
+## Escopo implementado nesta etapa
 
-“Gestão e acompanhamento físico de obras”. Não consultar, calcular, mapear ou mostrar orçamento, investimento, realizado, saldo, custo, valor de contrato, pagamentos, medições financeiras ou indicadores monetários. Campos antigos do banco são ignorados. Não implementar SAP, ERP, compras, fiscal, RH, multiempresa, WhatsApp ou automações externas.
+- Home inicial com identidade CutFlow e três cartões simples: Orçamentos, Produção e Capacidade.
+- Navegação adaptada a desktop e mobile para visão geral, orçamentos, pedidos, produção, planejamento, clientes, materiais, máquinas, relatórios e configurações.
+- Rotas de módulo provisórias sem lógica de negócio.
+- Preservar a infraestrutura saudável de Next.js, React, TypeScript, Tailwind, ESLint, PostCSS, aliases e build.
+- Remover telas, APIs, dados, tipos, serviços, assets e integração do produto anterior.
 
-## Autenticação e acesso
+## Restrições
 
-- Login somente por email/senha em `/login`; usuários serão provisionados manualmente no Supabase.
-- Sem cadastro público, login social, MFA ou recuperação de senha.
-- Toda rota operacional (incluindo `/`, projetos, pendências, terceirizados, atualizações, documentos e futuras rotas) exige sessão autenticada. Redirecionar para `/login` preservando pathname e query; APIs mantêm respostas 401 sem sessão.
-- `/login` não renderiza shell, navegação ou dados operacionais. Usuários autenticados veem o shell aprovado, identidade da conta e ação de logout.
-- Logout encerra a sessão local Supabase, limpa a interface protegida, usa navegação substitutiva para `/login` e rotas privadas enviam `Cache-Control: no-store`.
-- Expiração redireciona ao login preservando o contexto atual quando possível; após novo login, retorna ao caminho pretendido.
-- Nunca usar chave `service_role`; usar apenas `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
-- Não permitir escrita anônima nem simular sucesso. RLS continua habilitada e deve limitar operações às necessárias.
+- Não apagar histórico ou recriar o repositório; não executar `git init`.
+- Não remover ou editar secrets e variáveis locais; preservar `.env.local`.
+- Não acessar nem alterar Supabase, dados ou configuração externa da Vercel; não executar migrations ou deploy.
+- Não implementar funcionalidades do produto nesta etapa.
+- Não fazer push. O pedido original permite commit local se tudo estiver correto.
 
-## Banco existente e limites
+## Aceite
 
-- Projeto `projectmanager` (ref `lqccsgrijnlgviiqojif`), PostgreSQL 17.
-- Tabelas existentes: `projects`, `vendors`, `project_vendors`, `project_stages`, `issues`, `project_updates`, `update_attachments`, `documents`; view `project_overview` contém colunas financeiras e não deve ser usada.
-- Não recriar banco/tabelas; não remover colunas; sem migrations destrutivas. Políticas RLS podem ser endurecidas se a auditoria provar necessidade e a alteração não ampliar acesso. Registrar decisão antes de qualquer escrita no banco.
-- Não usar dados reais da empresa. Seeds atuais são fictícios.
+- Nenhuma referência textual ou visual ao produto anterior permanece no repositório.
+- README descreve apenas tecnologias presentes e o estado real.
+- `npm run lint`, `npm run typecheck` e `npm run build` passam.
+- Exibir `git status --short` no resumo final.
 
-## Decisões de implementação
+## Estado
 
-- Preservar stack e camada de serviços Supabase existente; usar `@supabase/ssr` para sessão SSR/App Router se a auditoria/documentação atual confirmar que é a integração apropriada.
-- Manter chamadas de banco em serviços/repos, com colunas explícitas e tipos estritos.
-- Usar modal/drawer compacto para editar etapa e pendência, mantendo desktop e mobile.
-- Ações esperadas: inserir atualização; atualizar etapa; inserir/atualizar pendência e marcar como resolvida. Sem exclusão operacional.
-- Não alterar RLS neste fluxo privado; manter as políticas já aplicadas, RLS habilitada e nenhuma política anônima de escrita.
-- Auditoria de 2026-09-30 encontrou políticas `authenticated manage ...` com `ALL USING (true) WITH CHECK (true)` nas oito tabelas. Isso permite mutações além do escopo, inclusive exclusões. Decisão: substituir por leitura para authenticated nas tabelas sem escrita operacional; `project_stages` recebe somente SELECT/UPDATE; `issues`, SELECT/INSERT/UPDATE; `project_updates`, SELECT/INSERT. Manter políticas anon SELECT existentes e RLS habilitada. Registrar como migration SQL sem tocar em dados/tabelas/colunas.
-- Migration `scope_authenticated_operational_writes` foi aplicada e conferida em `pg_policies`; a migration alterou somente policies, sem alteração de tabelas/colunas. No acceptance gate, os registros de teste foram inseridos pelas telas e removidos somente pelos IDs/sentinelas exatos; a etapa usada foi restaurada pela aplicação.
-- O maestro provisionou manualmente uma conta fictícia de teste. Login, restauração de sessão, logout e gravações autenticadas foram validados localmente; nenhuma conta foi criada automaticamente.
-- Dependência de sessão SSR: adicionar `@supabase/ssr` (versão estável consultada 0.12.7) para cookies compatíveis com App Router e middleware do Next 15; client usa somente URL e anon key públicas.
-- Nenhum deploy.
-
-## Critérios de aceite
-
-- Sem sessão, acesso direto e refresh em qualquer rota operacional redirecionam para `/login`, sem renderizar dados; APIs de escrita seguem exigindo sessão e respondem 401.
-- Usuário Supabase previamente provisionado entra, mantém sessão após refresh, registra atualização, atualiza etapa, cria/edita/resolva pendência; operações persistem e refletem sem refresh manual.
-- Erros de credencial, rede, token expirado e RLS são apresentados sem mensagens técnicas brutas.
-- Indicadores do dashboard e marcos são derivados de dados operacionais reais.
-- Todas as telas continuam sem dados financeiros e sem overflow a 390 px.
-- `npm run lint`, `npm run typecheck`, `npm run build` e `npm audit --audit-level=low` passaram. Fluxos autenticados e bloqueios de visitante foram validados com um usuário Supabase previamente provisionado.
-- Atualizar `DEV/HANDOFF.md`, `DEV/WORKLOG.md`, `DEV/VERIFY.md` e `DEV/CONTEXT.md` por bloco/final.
-
-## Bloqueios conhecidos no início (resolvidos)
-
-- A tentativa de insert anônimo em `project_updates` retornava `42501`; o endpoint exige Auth e recusa visitante com 401. O fluxo autenticado foi validado: POST respondeu 201 e a linha persistiu antes da limpeza pontual.
-- Credenciais públicas locais estão em `.env.local` (Git-ignored). A sessão válida e a persistência foram verificadas com a conta de teste provisionada manualmente; a senha não foi adicionada a arquivo, log da aplicação ou documentação.
-- Não criar usuários, não disparar email e não alterar dados de demonstração sem necessidade do teste autorizado.
-
-## Status
-
-- State: implementation complete; browser acceptance pending in an environment with browser automation and the provisioned test session.
-- Owner: Codex + maestro
-- Updated: 2026-09-30
+- Em execução.
+- Atualizado: 2026-09-30.

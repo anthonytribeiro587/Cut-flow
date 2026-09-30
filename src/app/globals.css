@@ -4,7 +4,7 @@
 
 :root { color-scheme: light; }
 * { box-sizing: border-box; }
-body { margin: 0; background: #f6f8f6; color: #17211f; font-family: Arial, Helvetica, sans-serif; font-size: 14px; -webkit-font-smoothing: antialiased; }
+body { margin: 0; background: #f7f8f8; color: #0f172a; font-family: Arial, Helvetica, sans-serif; font-size: 14px; -webkit-font-smoothing: antialiased; }
 button, input, select, textarea { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
-::selection { background: #cce8d9; color: #123c2e; }
+::selection { background: #dbeafe; color: #172554; }
