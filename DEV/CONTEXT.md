@@ -2,24 +2,28 @@
 
 ## State
 
-- Project: `projectmanager`
-- Repository initialized for Orquestrador Maestro + Codex workflow.
-- Application code has not been started.
-- Active handoff: `HANDOFF.md`
-- Active spec: `SPECS/ACTIVE.md`
+- Product: Obra.flux, a fictional MVP for physical works tracking. It is not an ERP or financial product.
+- Next.js 15 / React 19 / TypeScript / Tailwind; Supabase PostgreSQL and Supabase Auth. Main read pages load current Supabase rows through `src/services/project-service.ts`; `src/data/mock-data.ts` was removed.
+- `/login` uses email/password with `@supabase/ssr`, cookie session refresh and logout. Visitors keep read access. Authenticated writes are routed through server endpoints: create project update, update stage, create/update/resolve issue.
+- Dashboard tracks operational progress and upcoming stage/project/important-issue milestones. Documents remain metadata only; attachments/uploads are not active.
+- `supabase/migrations/20260930120000_scope_authenticated_operational_writes.sql` narrows policies only. Anonymous SELECT policies and RLS are preserved. No table/column/data change was made.
+- Acceptance gate completed 2026-09-30 in local production mode with the maestro-provisioned test account. Login/session refresh/logout and authenticated writes to updates, stages and issues passed; test rows were cleaned by exact ID and the stage was restored. No deployment.
 
 ## Commands
 
-- Install: pending
-- Development: pending
-- Tests: pending
-- Build: pending
+- Install: `npm install`
+- Local: `npm run dev`
+- Checks: `npm run lint`, `npm run typecheck`, `npm run build`, `npm audit`
+- Required public variables: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`. `.env.local` is Git-ignored. Never use/expose a service-role key.
 
-## Constraints And Risks
+## Decisions, Constraints And Risks
 
-- Keep the project setup focused on Codex + Maestro.
-- Do not add integrations for other AI coding tools unless explicitly requested.
+- Use only fictional data. Do not query, calculate, map or render money fields. Services select explicit physical/operational columns and avoid `project_overview`.
+- Do not alter schema or delete data. Existing RLS remains enabled; anon SELECT remains. Authenticated policies now permit SELECT generally, stage UPDATE, issue INSERT/UPDATE, update INSERT; other tables are read-only. Application validates stage/vendor relationships server-side.
+- No public signup, SAP, ERP, finance, purchases, fiscal, RH, multi-company, external automation, messaging, full contract workflows or Storage upload.
+- The maestro provisioned a fictional Supabase Auth test account manually. Do not create additional users or store credentials.
+- Errors/loading/empty UI exists; no automated unit/e2e suite is configured. Consult `VERIFY.md` for exercised checks.
 
 ## Next Context
 
-- Define the first active product spec before coding.
+The Auth acceptance gate is complete. See `HANDOFF.md` and `VERIFY.md`; commit/deploy only when the maestro requests it.
