@@ -1,13 +1,13 @@
 -- CutFlow foundation for the existing project. Review DEV/SUPABASE_AUDIT.md first.
--- DESTRUCTIVE PREPARATION: removes only documented Obra.flux objects in public. No DROP ... CASCADE.
--- Prepared only; review the loss plan in DEV/HANDOFF.md before any remote application.
+-- DESTRUCTIVE: removes only documented Obra.flux objects in public. No DROP ... CASCADE.
+-- Remote application authorized after matching the checkpoint in DEV/SUPABASE_AUDIT.md.
 drop view if exists public.project_overview;
 drop table if exists public.update_attachments;
+drop table if exists public.documents;
 drop table if exists public.project_updates;
 drop table if exists public.issues;
 drop table if exists public.project_stages;
 drop table if exists public.project_vendors;
-drop table if exists public.documents;
 drop table if exists public.vendors;
 drop table if exists public.projects;
 

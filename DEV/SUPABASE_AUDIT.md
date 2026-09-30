@@ -2,6 +2,18 @@
 
 Data: 2026-09-30
 
+## Resultado da aplicação CutFlow
+
+- Reconfirmado antes da escrita: URL local aponta para ref `lqccsgrijnlgviiqojif`, projeto `projectmanager`, região `sa-east-1`, PostgreSQL 17.6.1; mesmo projeto desta auditoria.
+- O inventário pré-migration coincidiu com a auditoria: `projects` 5, `vendors` 5, `project_vendors` 15, `project_stages` 50, `issues` 8, `project_updates` 6, `update_attachments` 0, `documents` 5. As três migrations históricas eram as mesmas.
+- A migration `20260930201909_cutflow_domain_foundation.sql` foi aplicada remotamente. A primeira tentativa foi revertida por dependência entre `documents` e `project_stages`; a ordem local foi corrigida para remover `documents` primeiro e a aplicação seguinte teve sucesso, sem `CASCADE`.
+- Confirmadas 21 tabelas CutFlow em `public`, PKs/FKs, índices definidos, seis enums, triggers de domínio e `set_updated_at`, 30 policies e RLS ativa em todas. `ensure_rls` e os helpers genéricos `set_updated_at()` e `rls_auto_enable()` foram preservados.
+- Os objetos legados `projects`, `vendors`, `project_vendors`, `project_stages`, `issues`, `project_updates`, `update_attachments`, `documents` e `project_overview` não existem mais.
+- Seed `Metalúrgica Horizonte` executado duas vezes sem duplicar registros; contagens após seed em `VERIFY.md`.
+- Há 1 usuário em `auth.users` e 0 membros em `organization_members`; nenhum usuário foi criado, apagado ou associado automaticamente. Uma conta autenticada escolhida deverá ser associada à organização demo para acessar dados protegidos.
+- `DEV/legacy-public-schema.sql` não foi criado: a CLI Supabase e `pg_dump` não estão instalados, impossibilitando o snapshot pelo CLI.
+- `.env.local`, Auth, Storage, Realtime, extensões e schemas gerenciados não foram alterados. O cliente da aplicação não contém uso de `service_role` ou chave secreta.
+
 Projeto remoto correspondente à URL existente: `projectmanager` · região `sa-east-1` · PostgreSQL 17.6
 Nenhuma credencial foi incluída neste documento.
 
@@ -69,4 +81,4 @@ O checkout CutFlow não contém services ou queries para essas tabelas. As rotas
 
 A migration local `supabase/migrations/20260930201909_cutflow_domain_foundation.sql` remove apenas `project_overview` e as oito tabelas antigas identificadas acima, sem `CASCADE`. Ela preserva `set_updated_at()`, `rls_auto_enable()`, `ensure_rls`, demais objetos genéricos, Auth, Storage e extensões. Em seguida cria as tabelas, relacionamentos, constraints, índices, RLS e helpers do CutFlow em `public`.
 
-A tabela de legado contém linhas (5 projetos, 5 fornecedores, 15 associações, 50 etapas, 8 pendências, 6 updates e 5 documentos). Essa remoção perderá os dados antigos e foi solicitada na conversão, mas **a migration ainda não foi aplicada**. Não houve escrita remota. O seed é separado e não foi executado.
+A tabela de legado continha linhas (5 projetos, 5 fornecedores, 15 associações, 50 etapas, 8 pendências, 6 updates e 5 documentos). No momento da auditoria inicial, a migration ainda não havia sido aplicada nem o seed executado; a alteração foi autorizada e concluída depois, conforme o resultado no início deste documento.

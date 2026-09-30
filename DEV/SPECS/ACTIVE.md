@@ -2,13 +2,13 @@
 
 ## Objetivo
 
-Auditar em modo somente leitura o projeto Supabase existente e preparar a fundação multi-tenant do CutFlow, incluindo migration, RLS, seed separado, repositories, cálculos e planejamento de capacidade.
+Ativar a fundação multi-tenant do CutFlow no mesmo projeto Supabase auditado, validar RLS/seed e verificar a aplicação local. A construção completa da UI permanece fora desta tarefa.
 
 ## Escopo e restrições
 
 - Reutilizar o projeto já configurado no `.env.local`; não criar outro projeto.
 - Preservar `.env.local`, Auth, Storage, configurações Supabase e schemas gerenciados.
-- Preparar migration versionada somente em `public`; não aplicar remotamente enquanto o inventário remoto estiver inacessível ou incerto.
+- Aplicar a migration versionada somente em `public` após reconfirmar ref e inventário remoto compatível com a auditoria.
 - Remover na migration somente objetos legados com evidência inequívoca, sem `CASCADE`.
 - Criar seed demo separado, com parâmetros industriais explicitamente demonstrativos.
 - Criar services por domínio e módulos puros de cálculo/scheduling com testes unitários.
@@ -25,8 +25,8 @@ DXF/DWG, nesting, IA, NFe, financeiro, ERP, estoque, otimização avançada, age
 - Schema, constraints, índices, RLS e triggers prontos em migration.
 - Seed, camada de dados, cálculos e agenda preparados.
 - Verificações locais aprovadas e commit `feat: establish CutFlow domain and database foundation` criado sem push.
-- Qualquer migration destrutiva remota não aplicada fica claramente registrada.
+- Migration estrutural aplicada no projeto Supabase original, seed idempotente executado, validações documentadas e commit local criado sem push.
 
 ## Estado
 
-- Concluído localmente em 2026-09-30; migration remota não aplicada deliberadamente. Inventário remoto e motivos em DEV/SUPABASE_AUDIT.md.
+- Concluído em 2026-09-30: migration aplicada no ref auditado, seed aplicado sem vínculo automático de usuário, validações locais/remotas registradas. UI completa não iniciada nesta tarefa.

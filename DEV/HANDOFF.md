@@ -6,17 +6,15 @@ Atualizado: 2026-09-30 · Contrato ativo: `SPECS/ACTIVE.md`
 
 - Aplicação ainda usa shell e páginas de módulo provisórias.
 - A infraestrutura SSR genérica Supabase continua apontando para o projeto existente `projectmanager`.
-- Auditoria remota somente leitura completada; ver `DEV/SUPABASE_AUDIT.md`.
-- Migration multi-tenant CutFlow, seed demo separado, repositories por domínio, cálculos puros e planejador de capacidade preparados localmente.
-- Migration destrutiva **não aplicada** e seed não executado.
-- `set_updated_at()`, `rls_auto_enable()`, `ensure_rls`, Auth, Storage, extensões e demais schemas preservados.
+- Migration CutFlow aplicada no mesmo projeto Supabase `projectmanager` auditado; seed demo idempotente executado. Evidências em `DEV/SUPABASE_AUDIT.md` e `DEV/VERIFY.md`.
+- CutFlow é o domínio ativo, com 21 tabelas e RLS ativa. A view e as oito tabelas legadas Obra.flux foram removidas.
+- Helpers `set_updated_at()`, `rls_auto_enable()`, event trigger `ensure_rls`, Auth, Storage, Realtime e extensões foram preservados.
+- Há 1 usuário Auth e 0 membros na organização demo. Associar explicitamente o usuário escolhido antes da UI consultar dados protegidos; nenhum usuário ou senha foi inventado.
 - Vitest adicionado como dependência exata de desenvolvimento para testes pedidos.
 
-## Antes de aplicar migration
+## Próximos passos
 
-- Revisar a perda dos dados antigos: tabelas legadas contêm 5 projetos, 5 fornecedores, 15 relações, 50 etapas, 8 issues, 6 updates e 5 documentos.
-- Confirmar snapshot/backup adequado fora desta mudança local.
-- Migration só remove a view `project_overview` e as oito tabelas antigas confirmadas; não usa `CASCADE` nem remove funções genéricas.
-- Seed seleciona o primeiro usuário Supabase como owner demo; revise esse alvo antes de executá-lo num ambiente compartilhado.
+- Associar explicitamente uma conta autenticada existente à organização demo quando o usuário indicar qual conta deve ser usada.
+- A UI completa segue fora do escopo desta tarefa.
 
 Ver evidências em `DEV/VERIFY.md`.

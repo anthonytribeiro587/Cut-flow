@@ -1,17 +1,11 @@
 -- Development/demo seed only. Run after the structural migration in a non-production environment.
 -- Illustrative cutting speeds and piercing times are DEMONSTRATION values, not technical specifications.
--- Adjust the membership to the intended developer account before exposing this demo to other users.
+-- Membership is intentionally not created: associate a deliberately chosen authenticated user separately.
 begin;
 
 insert into public.organizations(id,name,slug)
 values('c0f10a00-0000-4000-8000-000000000001','Metalúrgica Horizonte','metalurgica-horizonte')
 on conflict(id) do update set name=excluded.name, slug=excluded.slug;
-
-insert into public.organization_members(organization_id,user_id,role)
-select 'c0f10a00-0000-4000-8000-000000000001', u.id, 'owner'
-from auth.users u
-where u.id = (select id from auth.users order by created_at limit 1)
-on conflict(organization_id,user_id) do update set role='owner';
 
 insert into public.settings(organization_id)
 values('c0f10a00-0000-4000-8000-000000000001')
