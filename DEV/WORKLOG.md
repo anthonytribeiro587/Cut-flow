@@ -1,5 +1,12 @@
 # Worklog
 
+## 2026-09-30 — Fundação genérica Supabase
+
+- Reinstalados `@supabase/supabase-js` e `@supabase/ssr`; adicionados clientes browser/server, helpers de ambiente e middleware de sessão/cookies para Next.js App Router.
+- Mantido o projeto Supabase existente. `.env.local` não foi alterado; sem APIs ou domínio legado, migrations, tabelas ou operações remotas.
+- Lint, typecheck e build passaram. Commit local criado conforme o contrato ativo; sem push.
+- Detalhes em `VERIFY.md`.
+
 ## 2026-09-30 — Reset para CutFlow
 
 - Removidas telas, rotas, APIs, serviços, tipos, autenticação, integração Supabase, migration versionada e documentação do produto anterior.

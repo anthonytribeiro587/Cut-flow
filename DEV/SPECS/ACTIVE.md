@@ -1,8 +1,8 @@
-# Contrato ativo — Reset e fundação CutFlow
+# Contrato ativo — Fundação genérica Supabase para CutFlow
 
 ## Objetivo
 
-Remover o produto anterior e preparar a base profissional do CutFlow, sem implementar o SaaS completo.
+Preparar clientes genéricos Supabase para Next.js App Router, reutilizando o projeto já configurado no repositório.
 
 ## Identidade
 
@@ -10,28 +10,29 @@ Remover o produto anterior e preparar a base profissional do CutFlow, sem implem
 - Descrição: Orçamentos e produção industrial
 - Descrição técnica: SaaS de orçamento, planejamento de capacidade e gestão da produção industrial.
 
-## Escopo implementado nesta etapa
+## Escopo desta etapa
 
-- Home inicial com identidade CutFlow e três cartões simples: Orçamentos, Produção e Capacidade.
-- Navegação adaptada a desktop e mobile para visão geral, orçamentos, pedidos, produção, planejamento, clientes, materiais, máquinas, relatórios e configurações.
-- Rotas de módulo provisórias sem lógica de negócio.
-- Preservar a infraestrutura saudável de Next.js, React, TypeScript, Tailwind, ESLint, PostCSS, aliases e build.
-- Remover telas, APIs, dados, tipos, serviços, assets e integração do produto anterior.
+- Instalar `@supabase/supabase-js` e `@supabase/ssr`.
+- Criar cliente browser, cliente server e atualização de sessão/cookies para o App Router.
+- Reutilizar as variáveis existentes do `.env.local` sem ler ou alterar esse arquivo.
+- Preservar toda a infraestrutura saudável já existente.
 
 ## Restrições
 
 - Não apagar histórico ou recriar o repositório; não executar `git init`.
 - Não remover ou editar secrets e variáveis locais; preservar `.env.local`.
-- Não acessar nem alterar Supabase, dados ou configuração externa da Vercel; não executar migrations ou deploy.
+- Não criar outro projeto Supabase, nem executar migrations ou criar tabelas.
+- Não restaurar regras de negócio, APIs, tipos ou services antigos.
+- Não apagar dados/tabelas existentes, nem acessar ou alterar configuração externa da Vercel.
 - Não implementar funcionalidades do produto nesta etapa.
 - Não fazer push. O pedido original permite commit local se tudo estiver correto.
 
 ## Aceite
 
-- Nenhuma referência textual ou visual ao produto anterior permanece no repositório.
-- README descreve apenas tecnologias presentes e o estado real.
+- Pacotes e clientes Supabase SSR genéricos disponíveis para browser e server.
+- `.env.local` intacto; sem projeto remoto novo, migrations ou tabelas.
 - `npm run lint`, `npm run typecheck` e `npm run build` passam.
-- Exibir `git status --short` no resumo final.
+- Commit local `chore: prepare Supabase foundation for CutFlow`; sem push.
 
 ## Estado
 

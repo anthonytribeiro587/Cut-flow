@@ -1,5 +1,16 @@
 # Verificação
 
+## Fundação genérica Supabase — 2026-09-30
+
+- Instalados `@supabase/supabase-js` (`^2.117.2`) e `@supabase/ssr` (`^0.12.7`).
+- `src/lib/supabase/client.ts` — cliente browser; `server.ts` — cliente server com cookies async do Next.js 15; `middleware.ts` e `src/middleware.ts` — renovação de sessão e propagação de cookies.
+- Configuração lida pelas factories via `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY`; `.env.local` não foi editado.
+- `npm run lint` — passou.
+- `npm run typecheck` — passou.
+- `npm run build` — passou; middleware incluído no build.
+- Nenhum projeto Supabase criado, nenhuma consulta/remota executada, migration ou tabela criada, dado existente removido ou regra/API/tipo/service antigo restaurado.
+- Commit local criado; sem push.
+
 ## Reset CutFlow — 2026-09-30
 
 - `npm uninstall @supabase/ssr @supabase/supabase-js` — concluído; 0 vulnerabilidades reportadas.
